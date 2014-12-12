@@ -3,60 +3,75 @@ package com.gildedrose;
 class GildedRose {
     Item[] items;
 
-    public GildedRose(Item[] items) {
+    public GildedRose(final Item[] items) {
         this.items = items;
     }
 
     public void updateQuality() {
-        for (int i = 0; i < items.length; i++) {
-            if (!items[i].name.equals("Aged Brie")
-                    && !items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                if (items[i].quality > 0) {
-                    if (!items[i].name.equals("Sulfuras, Hand of Ragnaros")) {
-                        items[i].quality = items[i].quality - 1;
-                    }
-                }
-            } else {
-                if (items[i].quality < 50) {
-                    items[i].quality = items[i].quality + 1;
-
-                    if (items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                        if (items[i].sellIn < 11) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1;
-                            }
-                        }
-
-                        if (items[i].sellIn < 6) {
-                            if (items[i].quality < 50) {
-                                items[i].quality = items[i].quality + 1;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!items[i].name.equals("Sulfuras, Hand of Ragnaros")) {
-                items[i].sellIn = items[i].sellIn - 1;
-            }
-
-            if (items[i].sellIn < 0) {
-                if (!items[i].name.equals("Aged Brie")) {
-                    if (!items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                        if (items[i].quality > 0) {
-                            if (!items[i].name.equals("Sulfuras, Hand of Ragnaros")) {
-                                items[i].quality = items[i].quality - 1;
-                            }
-                        }
-                    } else {
-                        items[i].quality = items[i].quality - items[i].quality;
-                    }
-                } else {
-                    if (items[i].quality < 50) {
-                        items[i].quality = items[i].quality + 1;
-                    }
-                }
-            }
+        for (final Item item : items) {
+            updateQuality(item);
         }
+    }
+
+    private void updateQuality(final Item item) {
+        if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
+            // Do nothing
+        } else if (item.name.equals("Aged Brie")) {
+            updateAgedBrie(item);
+        } else if(item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+            updateBackstagePass(item);
+        } else {
+            updateGenericItem(item);
+        }
+    }
+
+    private void updateAgedBrie(final Item item) {
+        increaseQuality(item);
+        decreaseSellIn(item);
+        if (item.sellIn < 0) {
+            increaseQuality(item);
+        }
+    }
+
+    private void updateBackstagePass(final Item item) {
+        increaseQuality(item);
+    
+        if (item.sellIn < 11) {
+            increaseQuality(item);
+        }
+    
+        if (item.sellIn < 6) {
+            increaseQuality(item);
+        }
+    
+        decreaseSellIn(item);
+    
+        if (item.sellIn < 0) {
+            zeroQuality(item);
+        }
+    }
+
+    private void updateGenericItem(final Item item) {
+        decreaseQuality(item);
+        decreaseSellIn(item);
+        if (item.sellIn < 0) {
+            decreaseQuality(item);
+        }
+    }
+
+    private void decreaseQuality(final Item item) {
+        item.quality = Math.max(0, item.quality - 1);
+    }
+
+    private void increaseQuality(final Item item) {
+        item.quality = Math.min(50, item.quality + 1);
+    }
+
+    private void decreaseSellIn(final Item item) {
+        item.sellIn = item.sellIn - 1;
+    }
+
+    private void zeroQuality(final Item item) {
+        item.quality = item.quality - item.quality;
     }
 }
