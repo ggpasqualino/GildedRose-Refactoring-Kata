@@ -35,7 +35,7 @@ class GildedRose {
         if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
             // Do nothing
         } else {
-            item.sellIn = item.sellIn - 1;
+            decreaseSellIn(item);
         }
 
         if (item.name.equals("Aged Brie")) {
@@ -53,6 +53,10 @@ class GildedRose {
                 decreaseQuality(item);
             }
         }
+    }
+
+    private void decreaseSellIn(final Item item) {
+        item.sellIn = item.sellIn - 1;
     }
 
     private void decreaseQuality(final Item item) {
